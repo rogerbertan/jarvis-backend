@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: jarvis-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - jarvis-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  jarvis-network:
+    driver: bridge
