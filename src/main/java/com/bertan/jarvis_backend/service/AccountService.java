@@ -8,6 +8,7 @@ import com.bertan.jarvis_backend.model.Account;
 import com.bertan.jarvis_backend.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +22,7 @@ public class AccountService {
     @Autowired
     private AppConfig appConfig;
 
+    @Transactional(readOnly = true)
     public AccountBalanceResponseDTO findById(Long id) {
         return accountRepository.findById(id)
                 .map(account -> new AccountBalanceResponseDTO(
@@ -30,6 +32,7 @@ public class AccountService {
                 .orElse(null);
     }
 
+    @Transactional
     public AccountResponseDTO updateBalance(Long id, UpdateBalanceRequestDTO request) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
@@ -45,10 +48,12 @@ public class AccountService {
         );
     }
 
+    @Transactional(readOnly = true)
     public AccountBalanceResponseDTO getDefaultAccountBalance() {
         return findById(appConfig.getAccount().getId());
     }
 
+    @Transactional
     public AccountResponseDTO updateDefaultAccountBalance(UpdateBalanceRequestDTO request) {
         return updateBalance(appConfig.getAccount().getId(), request);
     }
