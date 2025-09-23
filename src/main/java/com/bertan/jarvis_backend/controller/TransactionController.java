@@ -49,6 +49,7 @@ public class TransactionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TransactionResponseDTO> getTransactionById(@PathVariable Long id) {
+        // TODO: Decide if findById should throw exception or return Optional
         Optional<TransactionResponseDTO> transaction = transactionService.findById(id);
         return transaction.map(ResponseEntity::ok)
                          .orElse(ResponseEntity.notFound().build());
@@ -56,21 +57,13 @@ public class TransactionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<TransactionResponseDTO> updateTransaction(@PathVariable Long id, @RequestBody TransactionRequestDTO requestDTO) {
-        try {
-            TransactionResponseDTO updatedTransaction = transactionService.update(id, requestDTO);
-            return ResponseEntity.ok(updatedTransaction);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        TransactionResponseDTO updatedTransaction = transactionService.update(id, requestDTO);
+        return ResponseEntity.ok(updatedTransaction);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
-        try {
-            transactionService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        transactionService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

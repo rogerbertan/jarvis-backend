@@ -4,6 +4,7 @@ import com.bertan.jarvis_backend.config.AppConfig;
 import com.bertan.jarvis_backend.dto.account.AccountBalanceResponseDTO;
 import com.bertan.jarvis_backend.dto.account.AccountResponseDTO;
 import com.bertan.jarvis_backend.dto.account.UpdateBalanceRequestDTO;
+import com.bertan.jarvis_backend.exception.ResourceNotFoundException;
 import com.bertan.jarvis_backend.model.Account;
 import com.bertan.jarvis_backend.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class AccountService {
     @Transactional
     public AccountResponseDTO updateBalance(Long id, UpdateBalanceRequestDTO request) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Conta", id));
 
         account.setCurrent_balance(request.currentBalance());
         Account updatedAccount = accountRepository.save(account);

@@ -31,21 +31,13 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Long id, @RequestBody CategoryRequestDTO requestDTO) {
-        try {
-            CategoryResponseDTO updatedCategory = categoryService.update(id, requestDTO);
-            return ResponseEntity.ok(updatedCategory);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        CategoryResponseDTO updatedCategory = categoryService.update(id, requestDTO);
+        return ResponseEntity.ok(updatedCategory);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        try {
-            categoryService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        categoryService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -2,6 +2,7 @@ package com.bertan.jarvis_backend.service;
 
 import com.bertan.jarvis_backend.dto.category.CategoryRequestDTO;
 import com.bertan.jarvis_backend.dto.category.CategoryResponseDTO;
+import com.bertan.jarvis_backend.exception.ResourceNotFoundException;
 import com.bertan.jarvis_backend.model.Category;
 import com.bertan.jarvis_backend.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponseDTO update(Long id, CategoryRequestDTO requestDTO) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria", id));
 
         category.setName(requestDTO.name());
         category.setType(requestDTO.type());
@@ -56,7 +57,7 @@ public class CategoryService {
     @Transactional
     public void deleteById(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new RuntimeException("Categoria não encontrada");
+            throw new ResourceNotFoundException("Categoria", id);
         }
         categoryRepository.deleteById(id);
     }

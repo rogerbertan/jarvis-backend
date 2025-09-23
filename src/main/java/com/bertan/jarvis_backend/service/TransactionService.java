@@ -2,6 +2,7 @@ package com.bertan.jarvis_backend.service;
 
 import com.bertan.jarvis_backend.dto.transaction.TransactionRequestDTO;
 import com.bertan.jarvis_backend.dto.transaction.TransactionResponseDTO;
+import com.bertan.jarvis_backend.exception.ResourceNotFoundException;
 import com.bertan.jarvis_backend.model.Transactions;
 import com.bertan.jarvis_backend.repository.AccountRepository;
 import com.bertan.jarvis_backend.repository.CategoryRepository;
@@ -64,11 +65,11 @@ public class TransactionService {
     public TransactionResponseDTO save(TransactionRequestDTO requestDTO) {
 
         if (!accountRepository.existsById(requestDTO.account_id())) {
-            throw new RuntimeException("Conta não encontrada");
+            throw new ResourceNotFoundException("Conta", requestDTO.account_id());
         }
 
         if (!categoryRepository.existsById(requestDTO.category_id())) {
-            throw new RuntimeException("Categoria não encontrada");
+            throw new ResourceNotFoundException("Categoria", requestDTO.category_id());
         }
 
         Transactions transaction = new Transactions();
@@ -87,14 +88,14 @@ public class TransactionService {
     public TransactionResponseDTO update(Long id, TransactionRequestDTO requestDTO) {
 
         Transactions transaction = transactionsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transação", id));
 
         if (!accountRepository.existsById(requestDTO.account_id())) {
-            throw new RuntimeException("Conta não encontrada");
+            throw new ResourceNotFoundException("Conta", requestDTO.account_id());
         }
 
         if (!categoryRepository.existsById(requestDTO.category_id())) {
-            throw new RuntimeException("Categoria não encontrada");
+            throw new ResourceNotFoundException("Categoria", requestDTO.category_id());
         }
 
         transaction.setAccount_id(requestDTO.account_id());
@@ -111,7 +112,7 @@ public class TransactionService {
     public void deleteById(Long id) {
 
         if (!transactionsRepository.existsById(id)) {
-            throw new RuntimeException("Transação não encontrada");
+            throw new ResourceNotFoundException("Transação", id);
         }
         transactionsRepository.deleteById(id);
     }
