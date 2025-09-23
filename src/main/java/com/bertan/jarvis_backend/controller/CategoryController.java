@@ -24,7 +24,6 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRequestDTO requestDTO) {
-        // TODO: Add validation logic here (e. g. Category name already exists)
         CategoryResponseDTO savedCategory = categoryService.save(requestDTO);
         return ResponseEntity.ok(savedCategory);
     }

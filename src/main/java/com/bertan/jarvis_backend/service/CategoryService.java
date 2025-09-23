@@ -34,6 +34,11 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDTO save(CategoryRequestDTO requestDTO) {
+
+        if (categoryRepository.existsByName(requestDTO.name())) {
+            throw new RuntimeException("Categoria com este nome já existe");
+        }
+
         Category category = new Category();
         category.setName(requestDTO.name());
         category.setType(requestDTO.type());
@@ -44,6 +49,11 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDTO update(Long id, CategoryRequestDTO requestDTO) {
+
+        if (categoryRepository.existsByNameAndIdNot(requestDTO.name(), id)) {
+            throw new RuntimeException("Categoria com este nome já existe");
+        }
+
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria", id));
 
