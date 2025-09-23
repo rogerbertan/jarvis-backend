@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -49,10 +48,9 @@ public class TransactionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TransactionResponseDTO> getTransactionById(@PathVariable Long id) {
-        // TODO: Decide if findById should throw exception or return Optional
-        Optional<TransactionResponseDTO> transaction = transactionService.findById(id);
-        return transaction.map(ResponseEntity::ok)
-                         .orElse(ResponseEntity.notFound().build());
+
+        TransactionResponseDTO transaction = transactionService.findById(id);
+        return ResponseEntity.ok(transaction);
     }
 
     @PutMapping("/{id}")

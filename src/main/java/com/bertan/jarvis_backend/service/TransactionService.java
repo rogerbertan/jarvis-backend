@@ -55,10 +55,11 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<TransactionResponseDTO> findById(Long id) {
+    public TransactionResponseDTO findById(Long id) {
 
         return transactionsRepository.findById(id)
-                .map(this::toResponseDTO);
+                .map(this::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Transação", id));
     }
 
     @Transactional
