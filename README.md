@@ -51,7 +51,6 @@ A Spring Boot budget planning application with PostgreSQL integration.
 ## API Endpoints
 
 The application provides REST endpoints for managing:
-- Users (`/api/users`)
 - Accounts (`/api/accounts`)
 - Categories (`/api/categories`)
 - Transactions (`/api/transactions`)
