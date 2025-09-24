@@ -2,6 +2,7 @@ package com.bertan.jarvis_backend.service;
 
 import com.bertan.jarvis_backend.dto.category.CategoryRequestDTO;
 import com.bertan.jarvis_backend.dto.category.CategoryResponseDTO;
+import com.bertan.jarvis_backend.exception.ConflictException;
 import com.bertan.jarvis_backend.exception.ResourceNotFoundException;
 import com.bertan.jarvis_backend.model.Category;
 import com.bertan.jarvis_backend.repository.CategoryRepository;
@@ -36,7 +37,7 @@ public class CategoryService {
     public CategoryResponseDTO save(CategoryRequestDTO requestDTO) {
 
         if (categoryRepository.existsByName(requestDTO.name())) {
-            throw new RuntimeException("Categoria com este nome já existe");
+            throw new ConflictException("Categoria com este nome já existe");
         }
 
         Category category = new Category();
@@ -51,7 +52,7 @@ public class CategoryService {
     public CategoryResponseDTO update(Long id, CategoryRequestDTO requestDTO) {
 
         if (categoryRepository.existsByNameAndIdNot(requestDTO.name(), id)) {
-            throw new RuntimeException("Categoria com este nome já existe");
+            throw new ConflictException("Categoria com este nome já existe");
         }
 
         Category category = categoryRepository.findById(id)
