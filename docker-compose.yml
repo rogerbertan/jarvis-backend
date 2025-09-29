@@ -10,15 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-scripts:/docker-entrypoint-initdb.d
-    networks:
-      - jarvis-network
+      - jarvis_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
-    driver: local
-
-networks:
-  jarvis-network:
-    driver: bridge
+  jarvis_data:

@@ -4,6 +4,26 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Environment & Secrets ###
+.env
+.env.local
+.env.prod
+.env.production
+*.env
+
+### Runtime Data (if created) ###
+data/
+logs/
+
+### Docker & SSL ###
+nginx/ssl/
+*.pem
+*.key
+*.crt
+
+### Docker Compose Override ###
+docker-compose.override.yml
+
 ### STS ###
 .apt_generated
 .classpath
