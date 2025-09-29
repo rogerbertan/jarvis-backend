@@ -12,5 +12,18 @@ services:
     volumes:
       - jarvis_data:/var/lib/postgresql/data
 
+  backend:
+    build: .
+    container_name: jarvis-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jarvisdb
+      SPRING_DATASOURCE_USERNAME: jarvis
+      SPRING_DATASOURCE_PASSWORD: spring123
+    depends_on:
+      - postgres
+      
 volumes:
   jarvis_data:
