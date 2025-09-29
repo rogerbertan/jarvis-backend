@@ -4,7 +4,7 @@ A Spring Boot budget planning application with PostgreSQL integration.
 
 ## Tech Stack
 
-![Java](https://img.shields.io/badge/Java-25-orange?style=flat-square&logo=openjdk)
+![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen?style=flat-square&logo=spring)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=flat-square&logo=postgresql)
 ![Maven](https://img.shields.io/badge/Maven-3.8+-red?style=flat-square&logo=apache-maven)
@@ -13,7 +13,7 @@ A Spring Boot budget planning application with PostgreSQL integration.
 ## Quick Start
 
 ### Prerequisites
-- Java 25
+- Java 21
 - Docker Desktop
 - Maven (or use included wrapper)
 

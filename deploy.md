@@ -1,75 +1,64 @@
-# Production Deployment Guide
+# Deployment Guide
 
-## Quick Start
+## Local Development
 
-1. **Setup Environment Variables**
-   ```bash
-   cp .env.prod.template .env.prod
-   # Edit .env.prod with your production values
-   ```
-
-2. **No directory setup needed**
-   Docker named volumes will be created automatically
-
-3. **Deploy Application**
-   ```bash
-   # Full deployment with all services
-   docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d
-
-   # Or just the backend and database
-   docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d jarvis-backend postgres
-   ```
-
-## Production Features
-
-### Security Enhancements
-- ✅ Database not exposed to host network
-- ✅ Non-root user in application container
-- ✅ Environment-based secrets management
-- ✅ Health checks for all services
-
-### Performance Optimizations
-- ✅ Multi-stage Docker builds for smaller images
-- ✅ JVM tuning for container environments
-- ✅ PostgreSQL performance configuration
-- ✅ Nginx reverse proxy ready
-
-### Monitoring & Reliability
-- ✅ Health checks with automatic restart
-- ✅ Persistent data volumes
-- ✅ Application logging
-- ✅ Database query monitoring
-
-## Management Commands
-
+### Quick Start
 ```bash
-# Check service status
-docker-compose -f docker-compose.prod.yml ps
+# Start PostgreSQL
+docker-compose up -d
 
-# View logs
-docker-compose -f docker-compose.prod.yml logs -f jarvis-backend
-docker-compose -f docker-compose.prod.yml logs -f postgres
-
-# Scale the application (if needed)
-docker-compose -f docker-compose.prod.yml up -d --scale jarvis-backend=2
-
-# Update application
-docker-compose -f docker-compose.prod.yml build jarvis-backend
-docker-compose -f docker-compose.prod.yml up -d jarvis-backend
-
-# Backup database
-docker exec jarvis-postgres-prod pg_dump -U $POSTGRES_USER $POSTGRES_DB > backup.sql
-
-# Stop services
-docker-compose -f docker-compose.prod.yml down
-
-# Stop and remove volumes (careful!)
-docker-compose -f docker-compose.prod.yml down -v
+# Start application
+./mvnw spring-boot:run
 ```
 
-## Configuration Notes
+### Database Management
+```bash
+# Reset database (removes all data)
+docker-compose down -v && docker-compose up -d
 
-- **Database**: Configured for 100 connections with optimized memory settings
-- **Application**: JVM heap set to 1GB max with G1 garbage collector
-- **Nginx**: Optional reverse proxy for SSL termination and load balancing
-- **Volumes**: Persistent data managed by Docker named volumes (system-wide)
+# Stop database
+docker-compose down
+```
+
+## Docker Deployment
+
+### Build and Run with Docker
+```bash
+# Build application image
+docker build -t jarvis-backend .
+
+# Run full stack with Docker
+docker-compose up -d
+docker run -p 8080:8080 --network jarvis-backend_default \
+  -e DB_HOST=postgres -e DB_NAME=jarvisdb -e DB_USER=jarvis -e DB_PASSWORD=spring123 \
+  jarvis-backend
+```
+
+### Management Commands
+```bash
+# Check service status
+docker-compose ps
+
+# View logs
+docker-compose logs -f postgres
+
+# Backup database
+docker exec jarvis-postgres pg_dump -U jarvis jarvisdb > backup.sql
+
+# Stop services
+docker-compose down
+```
+
+## Configuration
+
+### Database Settings
+- **Host**: localhost (development) / postgres (Docker)
+- **Database**: jarvisdb
+- **User**: jarvis
+- **Password**: spring123
+- **Port**: 5432
+
+### Application Settings
+- Default values configured in `application.properties`
+- Override with environment variables if needed:
+  - `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
