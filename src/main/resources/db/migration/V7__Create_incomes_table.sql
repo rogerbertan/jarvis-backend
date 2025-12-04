@@ -4,7 +4,7 @@ CREATE TABLE incomes (
     title VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL CHECK (amount >= 0),
     category_id INT NOT NULL,
-    date_income DATE NOT NULL,
+    date_incomed DATE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_incomes_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -13,4 +13,4 @@ CREATE TABLE incomes (
 
 CREATE INDEX idx_incomes_user_id ON incomes(user_id);
 CREATE INDEX idx_incomes_category_id ON incomes(category_id);
-CREATE INDEX idx_incomes_date_income ON incomes(date_income);
+CREATE INDEX idx_incomes_date_incomed ON incomes(date_incomed);
