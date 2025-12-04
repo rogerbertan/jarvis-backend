@@ -3,7 +3,6 @@ package com.bertan.jarvis_backend.service;
 import com.bertan.jarvis_backend.dto.transaction.TransactionRequestDTO;
 import com.bertan.jarvis_backend.dto.transaction.TransactionResponseDTO;
 import com.bertan.jarvis_backend.exception.ResourceNotFoundException;
-import com.bertan.jarvis_backend.model.Transactions;
 import com.bertan.jarvis_backend.repository.CategoryRepository;
 import com.bertan.jarvis_backend.repository.TransactionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,37 +1,50 @@
 package com.bertan.jarvis_backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "expenses")
+public class Expense {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(unique = true)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     @NotNull
-    private String email;
+    private User user;
 
-    @Column(name = "full_name")
     @NotNull
-    private String fullName;
+    private String title;
 
-    @Column(name = "avatar_url")
-    private String avatarUrl;
+    @Column(precision = 10, scale = 2)
+    @Min(0)
+    @NotNull
+    private BigDecimal amount;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    @NotNull
+    private Category category;
+
+    @Column(name = "date_expensed")
+    @NotNull
+    private LocalDate dateExpensed;
 
     @Column(name = "created_at")
     @NotNull
@@ -46,6 +59,7 @@ public class User {
         LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
+
     }
 
     @PreUpdate

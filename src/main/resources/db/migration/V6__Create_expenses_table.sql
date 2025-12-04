@@ -4,7 +4,7 @@ CREATE TABLE expenses (
     title VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL CHECK (amount >= 0),
     category_id INT NOT NULL,
-    date_expense DATE NOT NULL,
+    date_expensed DATE NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_expenses_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -13,4 +13,4 @@ CREATE TABLE expenses (
 
 CREATE INDEX idx_expenses_user_id ON expenses(user_id);
 CREATE INDEX idx_expenses_category_id ON expenses(category_id);
-CREATE INDEX idx_expenses_date_expense ON expenses(date_expense);
+CREATE INDEX idx_expenses_date_expensed ON expenses(date_expensed);
