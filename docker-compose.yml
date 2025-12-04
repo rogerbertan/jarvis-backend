@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: jarvis-postgres
-    restart: unless-stopped
+    #restart: unless-stopped
     environment:
       POSTGRES_DB: jarvisdb
       POSTGRES_USER: jarvis
@@ -15,7 +15,7 @@ services:
   backend:
     build: .
     container_name: jarvis-backend
-    restart: unless-stopped
+    #restart: unless-stopped
     ports:
       - "8080:8080"
     environment:

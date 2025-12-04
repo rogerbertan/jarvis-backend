@@ -3,10 +3,7 @@ package com.bertan.jarvis_backend.service;
 import com.bertan.jarvis_backend.dto.transaction.TransactionRequestDTO;
 import com.bertan.jarvis_backend.dto.transaction.TransactionResponseDTO;
 import com.bertan.jarvis_backend.exception.ResourceNotFoundException;
-import com.bertan.jarvis_backend.model.Transactions;
-import com.bertan.jarvis_backend.repository.AccountRepository;
 import com.bertan.jarvis_backend.repository.CategoryRepository;
-import com.bertan.jarvis_backend.repository.TransactionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransactionService {
