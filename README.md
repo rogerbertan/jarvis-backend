@@ -1,21 +1,22 @@
 # Jarvis Backend
 
-A Spring Boot budget planning application with PostgreSQL integration.
+Budget planning backend with user-specific income and expense tracking.
 
 ## Tech Stack
 
-![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen?style=flat-square&logo=spring)
+![Java](https://img.shields.io/badge/Java-25-orange?style=flat-square&logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.0-brightgreen?style=flat-square&logo=spring)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=flat-square&logo=postgresql)
 ![Maven](https://img.shields.io/badge/Maven-3.8+-red?style=flat-square&logo=apache-maven)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=flat-square&logo=docker)
+![Flyway](https://img.shields.io/badge/Flyway-11.14-red?style=flat-square)
 
 ## Quick Start
 
 ### Prerequisites
-- Java 21
+- Java 25
 - Docker Desktop
-- Maven (or use included wrapper)
+- Maven (wrapper included)
 
 ### Setup & Run
 
@@ -36,24 +37,22 @@ A Spring Boot budget planning application with PostgreSQL integration.
 
 ## Features
 
-- Budget planning and tracking
-- Financial account management
-- Transaction categorization
-- RESTful API endpoints
-- PostgreSQL data persistence
+- User account management
+- Income and expense tracking
+- Custom categories per user
+- Flyway database migrations
+- PostgreSQL persistence
 
 ## Architecture
 
-- **Layered Architecture**: Controller → Service → Repository → Entity
-- **ORM**: Spring Data JPA
-- **Database**: PostgreSQL with Docker Compose
+- **Layered**: Controller → Service → Repository → Model
+- **Entities**: User (UUID), Category, Income, Expense
+- **Migrations**: Flyway-managed schema
+- **Database**: PostgreSQL 16
 
 ## API Endpoints
 
-The application provides REST endpoints for managing:
-- Accounts (`/api/accounts`)
-- Categories (`/api/categories`)
-- Transactions (`/api/transactions`)
+- `/api/health` - Health check
 
 ## Development
 
