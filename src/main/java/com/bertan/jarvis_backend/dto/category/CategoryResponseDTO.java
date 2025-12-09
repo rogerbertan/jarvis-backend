@@ -1,7 +1,16 @@
 package com.bertan.jarvis_backend.dto.category;
 
+import com.bertan.jarvis_backend.model.CategoryType;
+import com.bertan.jarvis_backend.model.User;
+
+import java.time.LocalDateTime;
+
 public record CategoryResponseDTO(
-        Long id,
+        Integer id,
+        User user,
         String name,
-        String type
-) {}
+        CategoryType type,
+        String color,
+        LocalDateTime createdAt
+) {
+}
