@@ -10,30 +10,24 @@ graph TB
 
     subgraph "API Layer - Controllers"
         HC[HealthController<br/>/api/health]
-        AC[AccountController<br/>/api/account]
-        CC[CategoryController<br/>/api/categories]
-        TC[TransactionController<br/>/api/transactions]
     end
 
     subgraph "Business Logic Layer - Services"
-        AS[AccountService]
+        US[UserService]
         CS[CategoryService]
-        TS[TransactionService]
+        IS[IncomeService]
+        ES[ExpenseService]
     end
 
     subgraph "Data Access Layer - Repositories"
-        AR[AccountRepository<br/>JpaRepository]
+        UR[UserRepository<br/>JpaRepository]
         CR[CategoryRepository<br/>JpaRepository]
-        TR[TransactionsRepository<br/>JpaRepository]
+        IR[IncomeRepository<br/>JpaRepository]
+        ER[ExpenseRepository<br/>JpaRepository]
     end
 
     subgraph "Database Layer"
-        DB[(PostgreSQL 16<br/>Database: jarvisdb)]
-    end
-
-    subgraph "Configuration & Initialization"
-        CONF[AppConfig<br/>Default Account: 1]
-        INIT[DataInitializer<br/>Seed Default Account]
+        DB[(PostgreSQL 16<br/>Database: postgresdb)]
     end
 
     subgraph "Exception Handling"
@@ -45,31 +39,23 @@ graph TB
     end
 
     CLIENT --> HC
-    CLIENT --> AC
-    CLIENT --> CC
-    CLIENT --> TC
 
-    AC --> AS
-    CC --> CS
-    TC --> TS
-
-    AS --> AR
-    AS --> CONF
+    US --> UR
     CS --> CR
-    TS --> TR
-    TS --> AR
-    TS --> CR
+    CS --> UR
+    IS --> IR
+    IS --> UR
+    IS --> CR
+    ES --> ER
+    ES --> UR
+    ES --> CR
 
-    AR --> DB
+    UR --> DB
     CR --> DB
-    TR --> DB
+    IR --> DB
+    ER --> DB
 
-    INIT --> AR
-    CONF -.-> AS
-
-    AC -.-> GEH
-    CC -.-> GEH
-    TC -.-> GEH
+    HC -.-> GEH
 
     GEH --> JE
     JE --> CNF
@@ -79,8 +65,6 @@ graph TB
     style CLIENT fill:#e1f5ff,stroke:#01579b,stroke-width:2px,color:#000
     style DB fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style GEH fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000
-    style CONF fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
-    style INIT fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
 ```
 
 ## Component Architecture
@@ -131,30 +115,50 @@ graph LR
 
 ```mermaid
 erDiagram
-    ACCOUNT ||--o{ TRANSACTIONS : "has many"
-    CATEGORY ||--o{ TRANSACTIONS : "categorizes"
+    USER ||--o{ CATEGORY : "has many"
+    USER ||--o{ INCOME : "has many"
+    USER ||--o{ EXPENSE : "has many"
+    CATEGORY ||--o{ INCOME : "categorizes"
+    CATEGORY ||--o{ EXPENSE : "categorizes"
 
-    ACCOUNT {
-        bigint id PK
-        varchar name
-        decimal initial_balance
-        decimal current_balance
+    USER {
+        uuid id PK
+        varchar email UK
+        varchar full_name
+        varchar avatar_url
+        timestamp created_at
+        timestamp updated_at
     }
 
     CATEGORY {
-        bigint id PK
-        varchar name UK
-        varchar type
+        integer id PK
+        uuid user_id FK
+        varchar name
+        varchar type "INCOME or EXPENSE"
+        varchar color
+        timestamp created_at
     }
 
-    TRANSACTIONS {
-        bigint id PK
-        bigint account_id FK
-        bigint category_id FK
-        decimal amount
-        varchar description
-        timestamp date
+    INCOME {
+        integer id PK
+        uuid user_id FK
+        integer category_id FK
+        varchar title
+        decimal amount "precision 10, scale 2"
+        date date_incomed
         timestamp created_at
+        timestamp updated_at
+    }
+
+    EXPENSE {
+        integer id PK
+        uuid user_id FK
+        integer category_id FK
+        varchar title
+        decimal amount "precision 10, scale 2"
+        date date_expensed
+        timestamp created_at
+        timestamp updated_at
     }
 ```
 
@@ -169,93 +173,93 @@ graph TD
             H1[GET /health]
         end
 
-        subgraph "Account Management"
-            A1[GET /account/balance]
-            A2[PUT /account/balance]
-        end
-
-        subgraph "Category Management"
+        subgraph "Category Management - Future"
             C1[GET /categories]
             C2[POST /categories]
             C3[PUT /categories/:id]
             C4[DELETE /categories/:id]
         end
 
-        subgraph "Transaction Management"
-            T1[GET /transactions]
-            T2[GET /transactions/:id]
-            T3[POST /transactions]
-            T4[PUT /transactions/:id]
-            T5[DELETE /transactions/:id]
+        subgraph "Income Management - Future"
+            I1[GET /incomes]
+            I2[GET /incomes/:id]
+            I3[POST /incomes]
+            I4[PUT /incomes/:id]
+            I5[DELETE /incomes/:id]
+        end
+
+        subgraph "Expense Management - Future"
+            E1[GET /expenses]
+            E2[GET /expenses/:id]
+            E3[POST /expenses]
+            E4[PUT /expenses/:id]
+            E5[DELETE /expenses/:id]
         end
     end
 
     style H1 fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
-    style A1 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
-    style A2 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
     style C1 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style C2 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style C3 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style C4 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
-    style T1 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
-    style T2 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
-    style T3 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
-    style T4 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
-    style T5 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    style I1 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
+    style I2 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
+    style I3 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
+    style I4 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
+    style I5 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
+    style E1 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    style E2 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    style E3 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    style E4 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    style E5 fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
 ```
 
-## Request Flow - Create Transaction
+## Request Flow - Create Income
 
 ```mermaid
 sequenceDiagram
     participant Client
-    participant TransactionController
-    participant TransactionService
-    participant AccountRepository
+    participant IncomeController
+    participant IncomeService
     participant CategoryRepository
-    participant TransactionsRepository
+    participant IncomeRepository
     participant Database
     participant GlobalExceptionHandler
 
-    Client->>TransactionController: POST /api/transactions
-    activate TransactionController
+    Client->>IncomeController: POST /api/incomes
+    activate IncomeController
 
-    TransactionController->>TransactionService: save(TransactionRequestDTO)
-    activate TransactionService
+    IncomeController->>IncomeService: save(IncomeRequestDTO)
+    activate IncomeService
 
-    TransactionService->>AccountRepository: existsById(accountId)
-    AccountRepository->>Database: SELECT EXISTS(...)
-    Database-->>AccountRepository: true/false
-    AccountRepository-->>TransactionService: Account exists
-
-    alt Account not found
-        TransactionService->>GlobalExceptionHandler: throw ResourceNotFoundException
-        GlobalExceptionHandler-->>Client: 404 - Account not found
-    end
-
-    TransactionService->>CategoryRepository: existsById(categoryId)
-    CategoryRepository->>Database: SELECT EXISTS(...)
-    Database-->>CategoryRepository: true/false
-    CategoryRepository-->>TransactionService: Category exists
+    IncomeService->>CategoryRepository: findById(categoryId)
+    CategoryRepository->>Database: SELECT FROM categories WHERE id=?
+    Database-->>CategoryRepository: Category or empty
+    CategoryRepository-->>IncomeService: Optional<Category>
 
     alt Category not found
-        TransactionService->>GlobalExceptionHandler: throw ResourceNotFoundException
+        IncomeService->>GlobalExceptionHandler: throw ResourceNotFoundException
         GlobalExceptionHandler-->>Client: 404 - Category not found
     end
 
-    TransactionService->>TransactionService: Create Transactions entity<br/>Set created_at timestamp
+    alt Category type mismatch
+        IncomeService->>GlobalExceptionHandler: throw ValidationException
+        GlobalExceptionHandler-->>Client: 400 - Category must be INCOME type
+    end
 
-    TransactionService->>TransactionsRepository: save(entity)
-    TransactionsRepository->>Database: INSERT INTO transactions
-    Database-->>TransactionsRepository: Saved entity
-    TransactionsRepository-->>TransactionService: Transaction entity
+    IncomeService->>IncomeService: Create Income entity<br/>Set created_at, updated_at
 
-    TransactionService->>TransactionService: toResponseDTO(entity)
-    TransactionService-->>TransactionController: TransactionResponseDTO
-    deactivate TransactionService
+    IncomeService->>IncomeRepository: save(entity)
+    IncomeRepository->>Database: INSERT INTO incomes
+    Database-->>IncomeRepository: Saved entity
+    IncomeRepository-->>IncomeService: Income entity
 
-    TransactionController-->>Client: 200 OK - TransactionResponseDTO
-    deactivate TransactionController
+    IncomeService->>IncomeService: toResponseDTO(entity)
+    IncomeService-->>IncomeController: IncomeResponseDTO
+    deactivate IncomeService
+
+    IncomeController-->>Client: 200 OK - IncomeResponseDTO
+    deactivate IncomeController
 ```
 
 ## Exception Handling Flow
@@ -307,48 +311,20 @@ flowchart TD
     style E500 fill:#ef5350,stroke:#b71c1c,stroke-width:2px,color:#fff
 ```
 
-## Data Flow - Transaction Filtering
+## Data Flow - Income/Expense Queries
 
 ```mermaid
 flowchart LR
-    START[Client Request<br/>GET /api/transactions] --> PARAMS{Filter<br/>Parameters?}
+    START[Client Request<br/>GET /api/incomes] --> SERVICE[IncomeService]
 
-    PARAMS -->|No Filters| SIMPLE[findAll]
-    PARAMS -->|With Filters| FILTER[findAllWithFilters]
-
-    SIMPLE --> DB1[(Load All<br/>Transactions)]
-    FILTER --> DB2[(Load All<br/>Transactions)]
-
-    DB1 --> MAP1[Map to DTOs]
-    DB2 --> STREAM[Stream Processing]
-
-    STREAM --> F1{accountId<br/>filter?}
-    F1 -->|Yes| FILTER_ACC[Filter by<br/>account_id]
-    F1 -->|No| F2
-    FILTER_ACC --> F2
-
-    F2{categoryId<br/>filter?}
-    F2 -->|Yes| FILTER_CAT[Filter by<br/>category_id]
-    F2 -->|No| F3
-    FILTER_CAT --> F3
-
-    F3{Date range<br/>filter?}
-    F3 -->|Yes| FILTER_DATE[Filter by<br/>startDate & endDate]
-    F3 -->|No| F4
-    FILTER_DATE --> F4
-
-    F4{Amount range<br/>filter?}
-    F4 -->|Yes| FILTER_AMT[Filter by<br/>minAmount & maxAmount]
-    F4 -->|No| MAP2
-    FILTER_AMT --> MAP2
-
-    MAP2[Map to DTOs]
-    MAP1 --> RESULT[Return<br/>Transaction List]
-    MAP2 --> RESULT
+    SERVICE --> QUERY[Query all incomes]
+    QUERY --> DB[(Load Incomes)]
+    DB --> MAP[Map to DTOs]
+    MAP --> RESULT[Return<br/>Income List]
 
     style START fill:#e1f5ff,stroke:#01579b,stroke-width:2px,color:#000
     style RESULT fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
-    style STREAM fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    style SERVICE fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
 ```
 
 ## Application Startup Flow
@@ -359,8 +335,6 @@ sequenceDiagram
     participant SpringBoot
     participant Flyway
     participant Database
-    participant DataInitializer
-    participant AppConfig
     participant Services
 
     Docker->>Database: Start PostgreSQL Container
@@ -372,30 +346,18 @@ sequenceDiagram
     SpringBoot->>Flyway: Run Database Migrations
     activate Flyway
 
-    Flyway->>Database: V1__Create_account_table.sql
+    Flyway->>Database: V1__Create_users_table.sql
     Database-->>Flyway: Table created
 
-    Flyway->>Database: V2__Create_category_table.sql
+    Flyway->>Database: V2__Create_categories_table.sql
     Database-->>Flyway: Table created
 
-    Flyway->>Database: V3__Create_transactions_table.sql
+    Flyway->>Database: V3__Create_incomes_table.sql
+    Database-->>Flyway: Table created
+
+    Flyway->>Database: V4__Create_expenses_table.sql
     Database-->>Flyway: Table created
     deactivate Flyway
-
-    SpringBoot->>AppConfig: Load Configuration<br/>jarvis.default.account.id=1
-    activate AppConfig
-    AppConfig-->>SpringBoot: Configuration loaded
-    deactivate AppConfig
-
-    SpringBoot->>DataInitializer: run() - ApplicationRunner
-    activate DataInitializer
-
-    DataInitializer->>Database: Check if accounts exist
-    Database-->>DataInitializer: Empty table
-
-    DataInitializer->>Database: INSERT default account<br/>name='Default Account'<br/>balances=0
-    Database-->>DataInitializer: Account created (id=1)
-    deactivate DataInitializer
 
     SpringBoot->>Services: Initialize Services
     activate Services
@@ -417,7 +379,7 @@ graph TB
     subgraph "Docker Environment"
         direction TB
 
-        subgraph "jarvis-backend Container"
+        subgraph "jarvis-backend Container - Future"
             APP[Spring Boot Application<br/>Port: 8080<br/>User: jarvis UID:1001]
             JVM[JVM Options<br/>-Xms512m -Xmx1024m<br/>MaxRAMPercentage=75%]
             HC_CHECK[Health Check<br/>curl localhost:8080/api/health<br/>Every 30s]
@@ -426,9 +388,9 @@ graph TB
             APP --- HC_CHECK
         end
 
-        subgraph "jarvis-postgres Container"
-            PG[PostgreSQL 16<br/>Port: 5432<br/>Database: jarvisdb]
-            VOL[Volume: jarvis_data<br/>Persistent Storage]
+        subgraph "PostgreSQL Container"
+            PG[PostgreSQL 16<br/>Port: 5432<br/>Database: postgresdb]
+            VOL[Volume: postgres_data<br/>Persistent Storage]
 
             PG --- VOL
         end
