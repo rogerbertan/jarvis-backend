@@ -1,14 +1,5 @@
 <a id="readme-top"></a>
 
-<!-- PROJECT SHIELDS -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -17,11 +8,6 @@
   <p align="center">
     Budget planning backend with user-specific income and expense tracking
     <br />
-    <a href="https://github.com/rogerbertan/jarvis-backend"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/rogerbertan/jarvis-backend">View Demo</a>
-    ·
     <a href="https://github.com/rogerbertan/jarvis-backend/issues/new?labels=bug">Report Bug</a>
     ·
     <a href="https://github.com/rogerbertan/jarvis-backend/issues/new?labels=enhancement">Request Feature</a>
@@ -52,7 +38,6 @@
     <li><a href="#features">Features</a></li>
     <li><a href="#development">Development</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
 
@@ -302,17 +287,6 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `chore:` - Maintenance tasks
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTACT -->
-## Contact
-
-Project Link: [https://github.com/rogerbertan/jarvis-backend](https://github.com/rogerbertan/jarvis-backend)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/rogerbertan/jarvis-backend.svg?style=for-the-badge
