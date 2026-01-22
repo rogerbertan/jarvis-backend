@@ -49,7 +49,7 @@
 Jarvis Backend is a modern budget planning application built with Spring Boot 4 and Java 25. It provides a robust REST API for managing user accounts, income tracking, expense tracking, and custom categorization.
 
 Key capabilities:
-* User account management with secure UUID-based identification
+* User account management with auto-increment identification
 * Income and expense tracking with detailed categorization
 * User-specific custom categories with type distinction (income/expense)
 * Database schema versioning with Flyway migrations
@@ -134,20 +134,185 @@ For production, update these values in your `application.properties` or set them
 
 ### API Endpoints
 
-Currently available endpoints:
+The API provides comprehensive endpoints for managing users, categories, income, and expense tracking.
 
-| Endpoint      | Method | Description                                         |
-|---------------|--------|-----------------------------------------------------|
-| `/api/health` | GET    | Health check endpoint - verifies application status |
+#### Health
 
-**Example Response:**
+| Endpoint      | Method | Description                |
+|---------------|--------|----------------------------|
+| `/api/health` | GET    | Health check endpoint      |
+
+**Response:**
 ```json
 {
-  "status": "UP"
+  "status": "UP",
+  "service": "jarvis-backend",
+  "version": "1.0.0"
 }
 ```
 
-_For more details on API endpoints, please refer to the [API Documentation](https://github.com/rogerbertan/jarvis-backend)_
+#### Users
+
+| Endpoint           | Method | Description           |
+|--------------------|--------|-----------------------|
+| `/api/users`       | GET    | Get all users         |
+| `/api/users/{id}`  | GET    | Get user by ID        |
+| `/api/users`       | POST   | Create new user       |
+| `/api/users/{id}`  | PUT    | Update user           |
+| `/api/users/{id}`  | DELETE | Delete user           |
+
+**Create/Update User Request:**
+```json
+{
+  "email": "john.doe@example.com",
+  "fullName": "John Doe",
+  "avatarUrl": "https://example.com/avatar.jpg"
+}
+```
+
+**User Response:**
+```json
+{
+  "id": 1,
+  "email": "john.doe@example.com",
+  "fullName": "John Doe",
+  "avatarUrl": "https://example.com/avatar.jpg",
+  "createdAt": "2026-01-22T10:00:00",
+  "updatedAt": "2026-01-22T10:00:00"
+}
+```
+
+#### Categories
+
+| Endpoint                           | Method | Description                |
+|------------------------------------|--------|----------------------------|
+| `/api/categories`                  | GET    | Get all categories         |
+| `/api/categories/{id}`             | GET    | Get category by ID         |
+| `/api/users/{userId}/categories`   | GET    | Get user's categories      |
+| `/api/users/{userId}/categories`   | POST   | Create category for user   |
+| `/api/categories/{id}?userId={id}` | PUT    | Update category            |
+| `/api/categories/{id}?userId={id}` | DELETE | Delete category            |
+
+**Create Category Request:**
+```json
+{
+  "name": "Salary",
+  "type": "INCOME"
+}
+```
+
+**Update Category Request:**
+```json
+{
+  "name": "Monthly Salary",
+  "type": "INCOME",
+  "color": "#4CAF50"
+}
+```
+
+**Category Response:**
+```json
+{
+  "id": 1,
+  "userId": 1,
+  "name": "Salary",
+  "type": "INCOME",
+  "color": "#4CAF50",
+  "createdAt": "2026-01-22T10:00:00"
+}
+```
+
+**Note:** Category types are `INCOME` or `EXPENSE`
+
+#### Incomes
+
+| Endpoint                       | Method | Description           |
+|--------------------------------|--------|-----------------------|
+| `/api/users/{userId}/incomes`  | GET    | Get user's incomes    |
+| `/api/incomes/{id}`            | GET    | Get income by ID      |
+| `/api/users/{userId}/incomes`  | POST   | Create income         |
+| `/api/incomes/{id}`            | PUT    | Update income         |
+| `/api/incomes/{id}`            | DELETE | Delete income         |
+
+**Create/Update Income Request:**
+```json
+{
+  "title": "Monthly Salary",
+  "amount": 5000.00,
+  "categoryId": 1,
+  "dateIncomed": "2026-01-15"
+}
+```
+
+**Income Response:**
+```json
+{
+  "id": 1,
+  "userId": 1,
+  "title": "Monthly Salary",
+  "amount": 5000.00,
+  "category": {
+    "id": 1,
+    "userId": 1,
+    "name": "Salary",
+    "type": "INCOME",
+    "color": "#4CAF50",
+    "createdAt": "2026-01-22T10:00:00"
+  },
+  "dateIncomed": "2026-01-15",
+  "createdAt": "2026-01-22T10:00:00",
+  "updatedAt": "2026-01-22T10:00:00"
+}
+```
+
+#### Expenses
+
+| Endpoint                          | Method | Description           |
+|-----------------------------------|--------|-----------------------|
+| `/api/v1/users/{userId}/expenses` | GET    | Get user's expenses   |
+| `/api/v1/expenses/{id}`           | GET    | Get expense by ID     |
+| `/api/v1/users/{userId}/expenses` | POST   | Create expense        |
+| `/api/v1/expenses/{id}`           | PUT    | Update expense        |
+| `/api/v1/expenses/{id}`           | DELETE | Delete expense        |
+
+**Create/Update Expense Request:**
+```json
+{
+  "title": "Grocery Shopping",
+  "amount": 150.50,
+  "categoryId": 2,
+  "dateExpensed": "2026-01-20"
+}
+```
+
+**Expense Response:**
+```json
+{
+  "id": 1,
+  "userId": 1,
+  "title": "Grocery Shopping",
+  "amount": 150.50,
+  "category": {
+    "id": 2,
+    "userId": 1,
+    "name": "Groceries",
+    "type": "EXPENSE",
+    "color": "#FF5722",
+    "createdAt": "2026-01-22T10:00:00"
+  },
+  "dateExpensed": "2026-01-20",
+  "createdAt": "2026-01-22T10:00:00",
+  "updatedAt": "2026-01-22T10:00:00"
+}
+```
+
+**Validation Rules:**
+- Email must be valid format
+- Amount must be >= 0.01
+- Date format: YYYY-MM-DD
+- All required fields must be provided
+
+_For interactive API testing, import the [Postman Collection](Jarvis-Backend-API.postman_collection.json)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -165,7 +330,7 @@ Controller → Service → Repository → Model (Entity)
 ### Domain Models
 
 #### Entities
-- **User**: User accounts with UUID primary key, email (unique), full name, avatar URL, timestamps
+- **User**: User accounts with Long auto-increment primary key, email (unique), full name, avatar URL, timestamps
 - **Category**: User-specific transaction categories with type (income/expense), color, and user reference
 - **Income**: Income transactions with title, amount, category, date, and user reference
 - **Expense**: Expense transactions with title, amount, category, date, and user reference
@@ -176,7 +341,7 @@ Controller → Service → Repository → Model (Entity)
 - **Flyway Migrations**: Located in `src/main/resources/db/migration/`
   - V1-V3: Legacy tables (Account, Category, Transactions) - dropped in V4
   - V4: Drops all legacy tables
-  - V5: Creates `users` table with UUID primary key
+  - V5: Creates `users` table with auto-increment primary key
   - V6: Creates `categories` table with user foreign key
   - V7: Creates `incomes` table with user and category foreign keys
   - V8: Creates `expenses` table with user and category foreign keys
@@ -199,12 +364,13 @@ Controller → Service → Repository → Model (Entity)
 <!-- FEATURES -->
 ## Features
 
-- [x] User account management with UUID-based identification
+- [x] User account management with auto-increment identification
 - [x] Income and expense tracking per user
 - [x] Custom categories per user with type distinction
 - [x] Flyway database migrations for version control
 - [x] PostgreSQL persistence with optimized indexes
 - [x] RESTful API architecture
+- [x] Complete CRUD operations for all resources
 - [ ] User authentication and authorization
 - [ ] Budget planning and forecasting
 - [ ] Reporting and analytics
@@ -254,10 +420,10 @@ docker-compose down
 - Flyway manages all database schema changes - **do not use JPA DDL auto-generation**
 - Lombok annotations reduce boilerplate code (@Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor)
 - BigDecimal used for monetary values (DECIMAL(10,2) in database)
-- UUID used for User IDs, Integer auto-increment for other entities
+- Long auto-increment used for User IDs, Integer auto-increment for other entities
 - Automatic timestamp management with @PrePersist and @PreUpdate
 - Database setup: Use Docker container `local-postgres` with PostgreSQL 16
-- All entities have created_at timestamps; Income/Expense have updated_at as well
+- All entities have created_at timestamps; User, Income, and Expense have updated_at as well
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

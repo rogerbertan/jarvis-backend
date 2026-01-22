@@ -10,6 +10,10 @@ graph TB
 
     subgraph "API Layer - Controllers"
         HC[HealthController<br/>/api/health]
+        UC[UserController<br/>/api/users]
+        CC[CategoryController<br/>/api/categories]
+        IC[IncomeController<br/>/api/incomes]
+        EC[ExpenseController<br/>/api/v1/expenses]
     end
 
     subgraph "Business Logic Layer - Services"
@@ -39,6 +43,15 @@ graph TB
     end
 
     CLIENT --> HC
+    CLIENT --> UC
+    CLIENT --> CC
+    CLIENT --> IC
+    CLIENT --> EC
+
+    UC --> US
+    CC --> CS
+    IC --> IS
+    EC --> ES
 
     US --> UR
     CS --> CR
@@ -56,6 +69,10 @@ graph TB
     ER --> DB
 
     HC -.-> GEH
+    UC -.-> GEH
+    CC -.-> GEH
+    IC -.-> GEH
+    EC -.-> GEH
 
     GEH --> JE
     JE --> CNF
@@ -122,7 +139,7 @@ erDiagram
     CATEGORY ||--o{ EXPENSE : "categorizes"
 
     USER {
-        uuid id PK
+        bigint id PK
         varchar email UK
         varchar full_name
         varchar avatar_url
@@ -132,7 +149,7 @@ erDiagram
 
     CATEGORY {
         integer id PK
-        uuid user_id FK
+        bigint user_id FK
         varchar name
         varchar type "INCOME or EXPENSE"
         varchar color
@@ -141,7 +158,7 @@ erDiagram
 
     INCOME {
         integer id PK
-        uuid user_id FK
+        bigint user_id FK
         integer category_id FK
         varchar title
         decimal amount "precision 10, scale 2"
@@ -152,7 +169,7 @@ erDiagram
 
     EXPENSE {
         integer id PK
-        uuid user_id FK
+        bigint user_id FK
         integer category_id FK
         varchar title
         decimal amount "precision 10, scale 2"
@@ -173,35 +190,52 @@ graph TD
             H1[GET /health]
         end
 
-        subgraph "Category Management - Future"
-            C1[GET /categories]
-            C2[POST /categories]
-            C3[PUT /categories/:id]
-            C4[DELETE /categories/:id]
+        subgraph "User Management"
+            U1[GET /users]
+            U2[GET /users/:id]
+            U3[POST /users]
+            U4[PUT /users/:id]
+            U5[DELETE /users/:id]
         end
 
-        subgraph "Income Management - Future"
-            I1[GET /incomes]
+        subgraph "Category Management"
+            C1[GET /categories]
+            C2[GET /categories/:id]
+            C3[GET /users/:userId/categories]
+            C4[POST /users/:userId/categories]
+            C5[PUT /categories/:id]
+            C6[DELETE /categories/:id]
+        end
+
+        subgraph "Income Management"
+            I1[GET /users/:userId/incomes]
             I2[GET /incomes/:id]
-            I3[POST /incomes]
+            I3[POST /users/:userId/incomes]
             I4[PUT /incomes/:id]
             I5[DELETE /incomes/:id]
         end
 
-        subgraph "Expense Management - Future"
-            E1[GET /expenses]
-            E2[GET /expenses/:id]
-            E3[POST /expenses]
-            E4[PUT /expenses/:id]
-            E5[DELETE /expenses/:id]
+        subgraph "Expense Management - /api/v1"
+            E1[GET /v1/users/:userId/expenses]
+            E2[GET /v1/expenses/:id]
+            E3[POST /v1/users/:userId/expenses]
+            E4[PUT /v1/expenses/:id]
+            E5[DELETE /v1/expenses/:id]
         end
     end
 
     style H1 fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    style U1 fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px,color:#000
+    style U2 fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px,color:#000
+    style U3 fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px,color:#000
+    style U4 fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px,color:#000
+    style U5 fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px,color:#000
     style C1 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style C2 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style C3 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style C4 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
+    style C5 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
+    style C6 fill:#ffecb3,stroke:#f57f17,stroke-width:2px,color:#000
     style I1 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
     style I2 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
     style I3 fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#000
@@ -500,8 +534,8 @@ mindmap
 ## API Design Principles
 
 1. **RESTful**: Standard HTTP methods (GET, POST, PUT, DELETE)
-2. **Resource-Oriented**: Clear resource URLs (/api/transactions)
+2. **Resource-Oriented**: Clear resource URLs (/api/users, /api/categories, /api/incomes, /api/v1/expenses)
 3. **Consistent Responses**: Standardized DTO formats
 4. **Error Handling**: Meaningful HTTP status codes
-5. **Filtering Support**: Query parameters for complex searches
+5. **Nested Resources**: User-scoped resources (/api/users/{userId}/incomes)
 6. **KISS Principle**: Simple, maintainable design
