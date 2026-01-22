@@ -4,6 +4,9 @@ import com.bertan.jarvis_backend.model.Income;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface IncomeRepository extends JpaRepository <Income, Integer> {
+public interface IncomeRepository extends JpaRepository<Income, Integer> {
+    List<Income> findByUserId(Long userId);
 }

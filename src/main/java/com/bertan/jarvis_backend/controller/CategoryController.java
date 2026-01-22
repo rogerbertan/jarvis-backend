@@ -1,17 +1,18 @@
 package com.bertan.jarvis_backend.controller;
 
-import com.bertan.jarvis_backend.dto.category.CategoryResponseDTO;
+import com.bertan.jarvis_backend.dto.category.CategoryRequest;
+import com.bertan.jarvis_backend.dto.category.CategoryResponse;
+import com.bertan.jarvis_backend.dto.category.CategoryUpdateRequest;
 import com.bertan.jarvis_backend.service.CategoryService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/api")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -20,14 +21,42 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<CategoryResponseDTO>> getCategories() {
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryResponse>> getCategories() {
         return ResponseEntity.ok(categoryService.getCategories());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable Integer id) {
+    @GetMapping("/categories/{id}")
+    public ResponseEntity<CategoryResponse> getCategory(@PathVariable Integer id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
+    @GetMapping("/users/{userId}/categories")
+    public ResponseEntity<List<CategoryResponse>> getCategoriesByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(categoryService.getCategoriesByUserId(userId));
+    }
+
+    @PostMapping("/users/{userId}/categories")
+    public ResponseEntity<CategoryResponse> createCategory(
+            @PathVariable Long userId,
+            @Valid @RequestBody CategoryRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(categoryService.createCategory(userId, request));
+    }
+
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<CategoryResponse> updateCategory(
+            @PathVariable Integer id,
+            @RequestParam Long userId,
+            @Valid @RequestBody CategoryUpdateRequest request) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, userId, request));
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable Integer id,
+            @RequestParam Long userId) {
+        categoryService.deleteCategory(id, userId);
+        return ResponseEntity.noContent().build();
+    }
 }
